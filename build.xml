@@ -71,7 +71,7 @@
    <import file="${sdk.dir}/tools/ant/build.xml" />
         
     <target name="jar" depends="-compile">
-      <jar jarfile="wsapp-${version}.jar" basedir="bin/classes" excludes="bma/m/wsapp/R.class,bma/m/wsapp/R$*.class"/>
+      <jar jarfile="wsapp-${version}.jar" basedir="bin/classes" excludes="bma/m/wsapp/R.class,bma/m/wsapp/R$*.class,testcase/*"/>
     </target>
 
 </project>

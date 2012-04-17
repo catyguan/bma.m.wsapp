@@ -289,7 +289,6 @@ class ServerImpl implements TimeSource {
 					selector.select(1000);
 
 					/* process the selected list now */
-
 					Set<SelectionKey> selected = selector.selectedKeys();
 					Iterator<SelectionKey> iter = selected.iterator();
 					while (iter.hasNext()) {
