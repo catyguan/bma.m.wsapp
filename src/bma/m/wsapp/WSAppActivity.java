@@ -1,14 +1,13 @@
 package bma.m.wsapp;
 
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Display;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,43 +30,12 @@ public class WSAppActivity extends Activity {
 
 	protected LinearLayout root;
 	protected boolean bound = false;
+
 	protected WSAppServer server;
-	protected boolean cancelLoadUrl = false;
-	protected ProgressDialog spinnerDialog = null;
-
-	// activityState
-	private static int ACTIVITY_RUNNING = 1;
-	private static int ACTIVITY_EXITING = 2;
-	private int activityState = 0; // 0=starting, 1=running (after 1st resume),
-									// 2=shutting down
-
+	protected String serverUrl;
 	// The base of the initial URL for server url.
 	// http://127.0.0.1:port/
 	protected String baseUrl = null;
-
-	// Flag indicates that a loadUrl timeout occurred
-	protected int loadUrlTimeout = 0;
-
-	// Default background color for activity
-	// (this is not the color for the webview, which is set in HTML)
-	private int backgroundColor = Color.BLACK;
-
-	/*
-	 * The variables below are used to cache some of the activity properties.
-	 */
-	// Draw a splash screen using an image located in the drawable resource
-	// directory.
-	// This is not the same as calling super.loadSplashscreen(url)
-	protected int splashscreen = 0;
-
-	// LoadUrl timeout value in msec (default of 20 sec)
-	protected int loadUrlTimeoutValue = 20000;
-
-	// Keep app running when pause is received. (default = true)
-	// If true, then the JavaScript and native code continue to run in the
-	// background
-	// when another application (activity) is started.
-	protected boolean keepRunning = true;
 
 	// config
 	protected String initPath;
@@ -75,6 +43,10 @@ public class WSAppActivity extends Activity {
 
 	public WSAppActivity() {
 		super();
+	}
+
+	public String getBaseUrl() {
+		return this.baseUrl;
 	}
 
 	public String getInitPath() {
@@ -93,14 +65,29 @@ public class WSAppActivity extends Activity {
 		this.fullescreen = fullescreen;
 	}
 
+	public WebView getView() {
+		return this.appView;
+	}
+
+	protected void bindServerUrl(String surl) {
+		this.serverUrl = surl;
+		if (surl != null) {
+			int idx = surl.lastIndexOf('/');
+			if (idx != -1) {
+				this.baseUrl = surl.substring(0, idx + 1);
+			} else {
+				this.baseUrl = surl;
+			}
+		} else {
+			this.baseUrl = null;
+		}
+	}
+
 	public final class EclairClient extends WebChromeClient {
 		private long MAX_QUOTA = 2000000;
 
-		Context ctx;
-
-		public EclairClient(Context ctx) {
+		public EclairClient() {
 			super();
-			this.ctx = ctx;
 		}
 
 		public void onExceededDatabaseQuota(String url,
@@ -123,7 +110,8 @@ public class WSAppActivity extends Activity {
 				JsResult result) {
 			Log.d(TAG, message);
 			// This shows the dialog box. This can be commented out for dev
-			AlertDialog.Builder alertBldr = new AlertDialog.Builder(ctx);
+			AlertDialog.Builder alertBldr = new AlertDialog.Builder(
+					WSAppActivity.this);
 			alertBldr.setMessage(message);
 			alertBldr.setTitle("Alert");
 			alertBldr.show();
@@ -151,9 +139,9 @@ public class WSAppActivity extends Activity {
 
 		// This builds the view. We could probably get away with NOT having a
 		// LinearLayout, but I like having a bucket!
-		Display display = getWindowManager().getDefaultDisplay();
-		int width = display.getWidth();
-		int height = display.getHeight();
+		// Display display = getWindowManager().getDefaultDisplay();
+		// int width = display.getWidth();
+		// int height = display.getHeight();
 
 		LinearLayout.LayoutParams containerParams = new LinearLayout.LayoutParams(
 				ViewGroup.LayoutParams.FILL_PARENT,
@@ -178,8 +166,7 @@ public class WSAppActivity extends Activity {
 		 * Important for Javascript Debugging
 		 */
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ECLAIR) {
-			// TODO
-			// appView.setWebChromeClient(new EclairClient(this));
+			appView.setWebChromeClient(new EclairClient());
 		}
 
 		appView.setInitialScale(100);
@@ -197,8 +184,7 @@ public class WSAppActivity extends Activity {
 				+ "/app_database/");
 
 		/* Bind the appView object to the gap class methods */
-		// TODO
-		// bindBrowser(appView);
+		buildWebView(appView);
 
 		root.addView(appView);
 		setContentView(root);
@@ -211,9 +197,60 @@ public class WSAppActivity extends Activity {
 			if (path != null) {
 				this.initPath = path;
 			}
+			String surl = bundle.getString("serverUrl");
+			if (surl != null && surl.length() > 0) {
+				bindServerUrl(surl);
+			}
 		}
 		// Setup the hardware volume controls to handle volume control
 		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		this.endActivity();
+	}
+
+	protected void endActivity() {
+		if (this.appView != null) {
+			unloadWebView(this.appView);
+			this.appView.loadUrl("about:blank");
+		}
+		if (this.server != null) {
+			this.server.stop(0);
+			this.server = null;
+		}
+	}
+
+	protected void buildWebView(WebView appView) {
+
+	}
+
+	protected void unloadWebView(WebView appView) {
+
+	}
+
+	protected WSAppServer newServer() throws IOException {
+		return new WSAppServer();
+	}
+
+	protected void buildServer(WSAppServer s) {
+
+	}
+
+	protected void start() throws IOException {
+		if (this.serverUrl == null) {
+			if (this.server == null) {
+				this.server = newServer();
+			}
+			bindServerUrl(this.server.createServer());
+		}
+		appView.loadUrl(this.serverUrl);
+	}
+
+	public void loadUrl(String url) {
+		appView.loadUrl(url);
 	}
 
 }
