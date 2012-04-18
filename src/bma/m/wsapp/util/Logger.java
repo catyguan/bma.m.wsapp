@@ -1,24 +1,15 @@
 package bma.m.wsapp.util;
 
-/////////////////////////////////////
-/////////////////////////////////////
-//          NOT USED!!!           //
-/////////////////////////////////////
-/////////////////////////////////////
 
 import android.util.Log;
 
-/**
- * 
- * @author Joan Puig Sanz
- * 
- */
 public class Logger {
 
 	private String tag;
 
 	public Logger(String tag) {
 		super();
+		this.tag = tag;
 	}
 
 	public static Logger getLogger(String tag) {

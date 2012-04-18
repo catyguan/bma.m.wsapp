@@ -57,13 +57,28 @@ class ServerImpl implements TimeSource {
 	private Timer timer;
 	private Logger logger;
 
-	ServerImpl(HttpServer wrapper, String protocol, InetSocketAddress addr,
-			int backlog) throws IOException {
-
+	ServerImpl(HttpServer wrapper, String protocol) throws IOException {
+		super();
 		this.protocol = protocol;
 		this.wrapper = wrapper;
 		this.logger = Logger.getLogger(getClass());
 		contexts = new ContextList();
+	}
+	
+	ServerImpl(HttpServer wrapper, String protocol, InetSocketAddress addr,
+			int backlog) throws IOException {
+		this(wrapper,protocol);
+		bind(addr, backlog);
+		
+	}
+
+	public void bind(InetSocketAddress addr, int backlog) throws IOException {
+		if (bound) {
+			throw new BindException("HttpServer already bound");
+		}
+		if (addr == null) {
+			throw new NullPointerException("null address");
+		}
 		schan = ServerSocketChannel.open();
 		if (addr != null) {
 			ServerSocket socket = schan.socket();
@@ -82,18 +97,7 @@ class ServerImpl implements TimeSource {
 		timer = new Timer("server-timer", true);
 		timer.schedule(new ServerTimerTask(), CLOCK_TICK, CLOCK_TICK);
 		events = new LinkedList<Event>();
-		logger.debug("HttpServer created " + protocol + " " + addr);
-	}
-
-	public void bind(InetSocketAddress addr, int backlog) throws IOException {
-		if (bound) {
-			throw new BindException("HttpServer already bound");
-		}
-		if (addr == null) {
-			throw new NullPointerException("null address");
-		}
-		ServerSocket socket = schan.socket();
-		socket.bind(addr, backlog);
+		logger.debug("HttpServer bind " + protocol + " " + addr);
 		bound = true;
 	}
 
@@ -290,6 +294,7 @@ class ServerImpl implements TimeSource {
 
 					/* process the selected list now */
 					Set<SelectionKey> selected = selector.selectedKeys();
+					// getLogger().debug("selectedKeys:"+selected.size());
 					Iterator<SelectionKey> iter = selected.iterator();
 					while (iter.hasNext()) {
 						SelectionKey key = iter.next();

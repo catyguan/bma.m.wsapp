@@ -11,7 +11,12 @@ public class HttpServer {
 	protected ServerImpl server;
 
 	public HttpServer() throws IOException {
-		this(new InetSocketAddress(80), 0);
+		super();
+		server = new ServerImpl(this, "http");
+	}
+	
+	public HttpServer(int port) throws IOException {
+		this(new InetSocketAddress(port),0);
 	}
 
 	public HttpServer(InetSocketAddress addr, int backlog) throws IOException {
