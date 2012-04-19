@@ -214,10 +214,12 @@ public class WSAppActivity extends Activity {
 
 	protected void endActivity() {
 		if (this.appView != null) {
+			Log.d(TAG, "unloadWebView");
 			unloadWebView(this.appView);
 			this.appView.loadUrl("about:blank");
 		}
 		if (this.server != null) {
+			Log.d(TAG, "stop server");
 			this.server.stop(0);
 			this.server = null;
 		}
@@ -232,7 +234,9 @@ public class WSAppActivity extends Activity {
 	}
 
 	protected WSAppServer newServer() throws IOException {
-		return new WSAppServer();
+		WSAppServer r = new WSAppServer();
+		buildServer(r);
+		return r;
 	}
 
 	protected void buildServer(WSAppServer s) {

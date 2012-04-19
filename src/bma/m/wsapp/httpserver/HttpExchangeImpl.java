@@ -79,10 +79,6 @@ class HttpExchangeImpl extends HttpExchange {
 		impl.setStreams(i, o);
 	}
 
-	public HttpPrincipal getPrincipal() {
-		return impl.getPrincipal();
-	}
-
 	ExchangeImpl getExchangeImpl() {
 		return impl;
 	}

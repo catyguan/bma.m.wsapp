@@ -250,14 +250,5 @@ public abstract class HttpExchange {
 	 *            outputstream, or <code>null</code> if no change.
 	 */
 	public abstract void setStreams(InputStream i, OutputStream o);
-
-	/**
-	 * If an authenticator is set on the HttpContext that owns this exchange,
-	 * then this method will return the {@link HttpPrincipal} that represents
-	 * the authenticated user for this HttpExchange.
-	 * 
-	 * @return the HttpPrincipal, or <code>null</code> if no authenticator is
-	 *         set.
-	 */
-	public abstract HttpPrincipal getPrincipal();
+	
 }

@@ -14,9 +14,9 @@ public class HttpServer {
 		super();
 		server = new ServerImpl(this, "http");
 	}
-	
+
 	public HttpServer(int port) throws IOException {
-		this(new InetSocketAddress(port),0);
+		this(new InetSocketAddress(port), 0);
 	}
 
 	public HttpServer(InetSocketAddress addr, int backlog) throws IOException {
@@ -47,11 +47,11 @@ public class HttpServer {
 		server.stop(delay);
 	}
 
-	public HttpContextImpl createContext(String path, HttpHandler handler) {
+	public HttpContext createContext(String path, HttpHandler handler) {
 		return server.createContext(path, handler);
 	}
 
-	public HttpContextImpl createContext(String path) {
+	public HttpContext createContext(String path) {
 		return server.createContext(path);
 	}
 

@@ -57,7 +57,7 @@ class ExchangeImpl {
 	boolean sentHeaders; /* true after response headers sent */
 	Map<String, Object> attributes;
 	int rcode = -1;
-	HttpPrincipal principal;
+
 	ServerImpl server;
 
 	ExchangeImpl(String m, URI u, Request req, int len,
@@ -319,14 +319,6 @@ class ExchangeImpl {
 
 	ServerImpl getServerImpl() {
 		return getHttpContext().getServerImpl();
-	}
-
-	public HttpPrincipal getPrincipal() {
-		return principal;
-	}
-
-	void setPrincipal(HttpPrincipal principal) {
-		this.principal = principal;
 	}
 
 	static ExchangeImpl get(HttpExchange t) {
