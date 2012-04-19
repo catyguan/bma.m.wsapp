@@ -10,6 +10,7 @@ import android.util.Log;
 import bma.m.wsapp.httpserver.Headers;
 import bma.m.wsapp.httpserver.HttpExchange;
 import bma.m.wsapp.httpserver.HttpHandler;
+import bma.m.wsapp.util.HttpExchangeUtil;
 
 public class ContentHandler implements HttpHandler {
 
@@ -122,16 +123,8 @@ public class ContentHandler implements HttpHandler {
 												.getFirst(HTTP_HEADER_IF_MODIFIED))
 										.getTime();
 								if (ifModifiedSince >= ld.getTime()) {
-									String s = "Not Modified";
-									exchange.sendResponseHeaders(304,
-											s.length());
-									OutputStream out = exchange
-											.getResponseBody();
-									try {
-										out.write(s.getBytes());
-									} finally {
-										out.close();
-									}
+									HttpExchangeUtil.reply(exchange, 304,
+											"Not Modified");
 									return;
 								}
 							} catch (ParseException e) {
@@ -144,14 +137,7 @@ public class ContentHandler implements HttpHandler {
 				}
 
 				if (file == null) {
-					String info = "File not found";
-					exchange.sendResponseHeaders(404, info.length());
-					OutputStream out = exchange.getResponseBody();
-					try {
-						out.write(info.getBytes());
-					} finally {
-						out.close();
-					}
+					HttpExchangeUtil.reply(exchange, 304, "File not found");
 					return;
 				}
 
@@ -200,14 +186,7 @@ public class ContentHandler implements HttpHandler {
 			} else {
 				// HTTP 1.0 only defines HEAD, GET, POST.
 				Log.d(TAG, "bad request: " + httpCommand);
-				String error = "Bad Request";
-				exchange.sendResponseHeaders(400, error.length());
-				OutputStream out = exchange.getResponseBody();
-				try {
-					out.write(error.getBytes());
-				} finally {
-					out.close();
-				}
+				HttpExchangeUtil.reply(exchange, 400, "Bad Request");
 				return;
 			}
 		} catch (IOException e) {
@@ -217,16 +196,8 @@ public class ContentHandler implements HttpHandler {
 			// Ok, now HTTP 500 is the right way to inform the client.
 			Log.w(TAG, "Internal Server error", e);
 
-			String error = "Internal Server Error";
 			rheaders.add("Content-type:", "text/html");
-			exchange.sendResponseHeaders(500, error.length());
-			OutputStream out = exchange.getResponseBody();
-			try {
-				out.write(error.getBytes());
-			} catch (Exception e2) {
-			} finally {
-				out.close();
-			}
+			HttpExchangeUtil.reply(exchange, 500, "Internal Server Error");
 		}
 	}
 

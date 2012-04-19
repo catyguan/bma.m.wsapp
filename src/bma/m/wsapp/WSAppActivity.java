@@ -123,7 +123,7 @@ public class WSAppActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		Log.d(TAG, "WSAppActivity.onCreate()");
+		Log.d(TAG, "onCreate()");
 		super.onCreate(savedInstanceState);
 
 		getWindow().requestFeature(Window.FEATURE_NO_TITLE);
@@ -246,7 +246,13 @@ public class WSAppActivity extends Activity {
 			}
 			bindServerUrl(this.server.createServer());
 		}
-		appView.loadUrl(this.serverUrl);
+		StringBuffer buf = new StringBuffer(1024);
+		buf.append(this.serverUrl);
+		if (this.initPath != null && this.initPath.length() > 0) {
+			buf.append("?go=").append(this.initPath);
+		}
+		Log.d(TAG, "start(" + buf + ")");
+		appView.loadUrl(buf.toString());
 	}
 
 	public void loadUrl(String url) {
