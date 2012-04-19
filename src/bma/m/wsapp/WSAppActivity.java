@@ -83,10 +83,10 @@ public class WSAppActivity extends Activity {
 		}
 	}
 
-	public final class EclairClient extends WebChromeClient {
+	public final class AppWebChromeClient extends WebChromeClient {
 		private long MAX_QUOTA = 2000000;
 
-		public EclairClient() {
+		public AppWebChromeClient() {
 			super();
 		}
 
@@ -119,6 +119,15 @@ public class WSAppActivity extends Activity {
 			return true;
 		}
 
+	}
+	
+	public class AppWebViewClient extends WebViewClient {
+		@Override
+		public void onReceivedError(WebView view, int errorCode,
+				String description, String failingUrl) {
+			Log.e(TAG, errorCode+":"+description+":"+failingUrl);
+			// super.onReceivedError(view, errorCode, description, failingUrl);
+		}
 	}
 
 	@Override
@@ -166,8 +175,9 @@ public class WSAppActivity extends Activity {
 		 * Important for Javascript Debugging
 		 */
 		if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ECLAIR) {
-			appView.setWebChromeClient(new EclairClient());
+			appView.setWebChromeClient(new AppWebChromeClient());
 		}
+		appView.setWebViewClient(new AppWebViewClient());
 
 		appView.setInitialScale(100);
 		appView.setVerticalScrollBarEnabled(false);

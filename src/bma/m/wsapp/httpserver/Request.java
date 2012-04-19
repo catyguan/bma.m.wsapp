@@ -28,7 +28,7 @@ class Request {
 		do {
 			startLine = readLine();
 			/* skip blank lines */
-		} while (startLine.equals(""));
+		} while (startLine!=null && startLine.equals(""));
 	}
 
 	char[] buf = new char[BUF_LEN];

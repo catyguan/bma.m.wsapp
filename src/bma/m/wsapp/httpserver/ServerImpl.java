@@ -413,7 +413,7 @@ class ServerImpl implements TimeSource {
 					/* figure out what kind of connection this is */
 					newconnection = true;
 					rawin = new BufferedInputStream(new Request.ReadStream(
-							ServerImpl.this, chan));
+							ServerImpl.this, chan),4*1024);
 					rawout = new Request.WriteStream(ServerImpl.this, chan);
 				}
 				Request req = new Request(rawin, rawout);

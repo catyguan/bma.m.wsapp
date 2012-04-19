@@ -43,7 +43,7 @@ public class WSAppServer extends HttpServer {
 		getLogger().debug("WSAppServer(" + r + ")");
 		super.start();
 
-		super.createContext(this.token, new HttpHandler() {
+		super.createContext("/"+this.token, new HttpHandler() {
 
 			public void handle(HttpExchange exchange) throws IOException {
 
@@ -54,11 +54,11 @@ public class WSAppServer extends HttpServer {
 					home = reqs.get("go");
 				}
 				getLogger().debug("auth done,home = " + home);
-				Headers h = exchange.getRequestHeaders();
+				Headers h = exchange.getResponseHeaders();
 				h.add("Location", getUrl(home));
 				h.add("Set-Cookie",
 						"token=" + HttpExchangeUtil.urlencode(token));
-				HttpExchangeUtil.reply(exchange, 200, "welcome");
+				HttpExchangeUtil.reply(exchange, 302, "loading");
 			}
 
 		});

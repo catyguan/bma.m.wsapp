@@ -179,7 +179,7 @@ class ExchangeImpl {
 		}
 		this.rcode = rCode;
 		String statusLine = "HTTP/1.1 " + rCode + Code.msg(rCode) + "\r\n";
-		OutputStream tmpout = new BufferedOutputStream(ros);
+		OutputStream tmpout = new BufferedOutputStream(ros,4*1024);
 		PlaceholderOutputStream o = getPlaceholderResponseBody();
 		tmpout.write(bytes(statusLine, 0), 0, statusLine.length());
 		boolean noContentToSend = false; // assume there is content
