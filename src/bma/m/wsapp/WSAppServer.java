@@ -10,7 +10,10 @@ public class WSAppServer extends HttpServer {
 	private String token;
 
 	public WSAppServer() throws IOException {
-		super(new InetSocketAddress("127.0.0.1", 0), 0);
+		super();
+		System.setProperty("java.net.preferIPv4Stack", "true");
+		System.setProperty("java.net.preferIPv6Addresses", "false");
+		this.bind(new InetSocketAddress("127.0.0.1", 0), 0);
 	}
 
 	public String createServer() {
