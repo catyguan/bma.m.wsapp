@@ -1,6 +1,9 @@
 package bma.m.wsapp;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -113,19 +116,19 @@ public class WSAppActivity extends Activity {
 			AlertDialog.Builder alertBldr = new AlertDialog.Builder(
 					WSAppActivity.this);
 			alertBldr.setMessage(message);
-			alertBldr.setTitle("Alert");
+			alertBldr.setTitle(getTitle());
 			alertBldr.show();
 			result.confirm();
 			return true;
 		}
 
 	}
-	
+
 	public class AppWebViewClient extends WebViewClient {
 		@Override
 		public void onReceivedError(WebView view, int errorCode,
 				String description, String failingUrl) {
-			Log.e(TAG, errorCode+":"+description+":"+failingUrl);
+			Log.e(TAG, errorCode + ":" + description + ":" + failingUrl);
 			// super.onReceivedError(view, errorCode, description, failingUrl);
 		}
 	}
@@ -231,6 +234,12 @@ public class WSAppActivity extends Activity {
 		if (this.server != null) {
 			Log.d(TAG, "stop server");
 			this.server.stop(0);
+			try {
+				((ExecutorService) this.server.getExecutor()).awaitTermination(
+						1, TimeUnit.SECONDS);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			this.server = null;
 		}
 	}
@@ -257,6 +266,9 @@ public class WSAppActivity extends Activity {
 		if (this.serverUrl == null) {
 			if (this.server == null) {
 				this.server = newServer();
+			}
+			if (this.server.getExecutor() == null) {
+				this.server.setExecutor(Executors.newFixedThreadPool(5));
 			}
 			bindServerUrl(this.server.createServer());
 		}

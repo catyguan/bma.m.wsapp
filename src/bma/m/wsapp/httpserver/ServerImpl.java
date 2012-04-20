@@ -64,12 +64,12 @@ class ServerImpl implements TimeSource {
 		this.logger = Logger.getLogger(getClass());
 		contexts = new ContextList();
 	}
-	
+
 	ServerImpl(HttpServer wrapper, String protocol, InetSocketAddress addr,
 			int backlog) throws IOException {
-		this(wrapper,protocol);
+		this(wrapper, protocol);
 		bind(addr, backlog);
-		
+
 	}
 
 	public void bind(InetSocketAddress addr, int backlog) throws IOException {
@@ -106,7 +106,7 @@ class ServerImpl implements TimeSource {
 			throw new IllegalStateException("server in wrong state");
 		}
 		if (executor == null) {
-			executor = new DefaultExecutor();
+			throw new NullPointerException("executor");
 		}
 		Thread t = new Thread(dispatcher);
 		started = true;
@@ -118,12 +118,6 @@ class ServerImpl implements TimeSource {
 			throw new IllegalStateException("server already started");
 		}
 		this.executor = executor;
-	}
-
-	private static class DefaultExecutor implements Executor {
-		public void execute(Runnable task) {
-			task.run();
-		}
 	}
 
 	public Executor getExecutor() {
@@ -413,7 +407,7 @@ class ServerImpl implements TimeSource {
 					/* figure out what kind of connection this is */
 					newconnection = true;
 					rawin = new BufferedInputStream(new Request.ReadStream(
-							ServerImpl.this, chan),4*1024);
+							ServerImpl.this, chan), 4 * 1024);
 					rawout = new Request.WriteStream(ServerImpl.this, chan);
 				}
 				Request req = new Request(rawin, rawout);

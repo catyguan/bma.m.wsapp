@@ -1,5 +1,6 @@
 package bma.m.wsapp.content;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 
@@ -17,6 +18,6 @@ public interface ContentFile {
 
 	public int getContentLength();
 
-	public void writeTo(OutputStream out);
+	public void writeTo(OutputStream out) throws IOException;
 
 }
