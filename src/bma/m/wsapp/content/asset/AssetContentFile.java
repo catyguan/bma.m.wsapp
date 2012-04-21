@@ -1,11 +1,11 @@
-package bma.m.wsapp.resource;
+package bma.m.wsapp.content.asset;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import android.content.res.AssetFileDescriptor;
 import bma.m.wsapp.content.ContentFile;
 import bma.m.wsapp.httpserver.MimeTypes;
 import bma.m.wsapp.util.IOUtil;
@@ -13,9 +13,7 @@ import bma.m.wsapp.util.IOUtil;
 public class AssetContentFile implements ContentFile {
 
 	private String fileName;
-	private AssetFileDescriptor fd;
-	private boolean directory;
-	private boolean exists = true;
+	private byte[] data;
 
 	public String getFileName() {
 		return fileName;
@@ -25,36 +23,20 @@ public class AssetContentFile implements ContentFile {
 		this.fileName = fileName;
 	}
 
-	public boolean isExists() {
-		return exists;
+	public byte[] getData() {
+		return data;
 	}
 
-	public void setExists(boolean exists) {
-		this.exists = exists;
+	public void setData(byte[] data) {
+		this.data = data;
 	}
-
-	public AssetFileDescriptor getFd() {
-		return fd;
-	}
-
-	public void setFd(AssetFileDescriptor fh) {
-		this.fd = fh;
-	}
-
-	public void setDirectory(boolean directory) {
-		this.directory = directory;
-	}
-
+	
 	public String getContentType() {
 		return MimeTypes.contentType(this.fileName);
 	}
 
 	public boolean exists() {
-		return exists;
-	}
-
-	public boolean isDirectory() {
-		return directory;
+		return true;
 	}
 
 	public Date lastModified() {
@@ -66,20 +48,15 @@ public class AssetContentFile implements ContentFile {
 	}
 
 	public int getContentLength() {
-		if (this.directory)
+		if (this.data==null)
 			return -1;
-		if (this.fd == null)
-			return -1;
-		return (int) this.fd.getDeclaredLength();
+		return this.data.length;
 	}
 
 	public void writeTo(OutputStream out) throws IOException {
-		if (this.fd == null) {
-			throw new NullPointerException(fileName + " AssetFileDescriptor");
-		}
 		InputStream in = null;
 		try {
-			in = this.fd.createInputStream();
+			in = new ByteArrayInputStream(this.data);
 			IOUtil.copy(in, out);
 		} finally {
 			IOUtil.close(in);

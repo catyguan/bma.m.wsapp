@@ -1,5 +1,6 @@
 package bma.m.wsapp.content;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import bma.m.wsapp.httpserver.HttpExchange;
@@ -23,6 +24,13 @@ public class ChainContentFileProvider implements ContentFileProvider {
 
 	public void setProviders(List<ContentFileProvider> providers) {
 		this.providers = providers;
+	}
+	
+	public void addProvider(ContentFileProvider p) {
+		if(this.providers==null) {
+			this.providers = new ArrayList<ContentFileProvider>();
+		}
+		this.providers.add(p);
 	}
 
 	public ContentFile getContent(String path, HttpExchange exchange) {

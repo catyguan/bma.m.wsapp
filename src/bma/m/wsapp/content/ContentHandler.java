@@ -22,7 +22,6 @@ public class ContentHandler implements HttpHandler {
 	private static final String TAG = "ContentHandler";
 
 	private ContentFileProvider provider;
-	private String pageIndex = "index.html";
 	private String page404 = "404.html";
 	private HttpHandler rootHandler;
 
@@ -30,15 +29,7 @@ public class ContentHandler implements HttpHandler {
 		super();
 		this.provider = p;
 	}
-
-	public String getPageIndex() {
-		return pageIndex;
-	}
-
-	public void setPageIndex(String indexName) {
-		this.pageIndex = indexName;
-	}
-
+	
 	public HttpHandler getRootHandler() {
 		return rootHandler;
 	}
@@ -80,21 +71,7 @@ public class ContentHandler implements HttpHandler {
 
 				boolean fileExists = true;
 
-				if (file != null && file.exists()) {
-					if (file.isDirectory()) {
-						file = provider.getContent(
-								fileName + (fileName.endsWith("/") ? "" : "/")
-										+ pageIndex, exchange);
-						if (file != null && file.exists()) {
-							if (Log.isLoggable(TAG, Log.DEBUG)) {
-								Log.d(TAG, "index file:" + fileName + ","
-										+ pageIndex);
-							}
-						} else {
-							fileExists = false;
-						}
-					}
-				} else {
+				if (file == null || !file.exists()) {
 					fileExists = false;
 				}
 
@@ -103,12 +80,7 @@ public class ContentHandler implements HttpHandler {
 				rheaders.add("Date:", df.format(System.currentTimeMillis()));
 
 				if (!fileExists) {
-					file = provider.getContent("404.html", exchange);
-					if (file != null && file.exists()) {
-						if (Log.isLoggable(TAG, Log.DEBUG)) {
-							Log.d(TAG, "404 file:" + fileName + "," + page404);
-						}
-					}
+					Log.w(TAG, "404: " + fileName);
 				}
 
 				if (file != null) {
@@ -137,7 +109,7 @@ public class ContentHandler implements HttpHandler {
 				}
 
 				if (file == null) {
-					HttpExchangeUtil.reply(exchange, 304, "File not found");
+					HttpExchangeUtil.reply(exchange, 404, "File not found");
 					return;
 				}
 

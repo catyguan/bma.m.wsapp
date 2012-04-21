@@ -10,8 +10,6 @@ public interface ContentFile {
 
 	public boolean exists();
 
-	public boolean isDirectory();
-
 	public Date lastModified();
 
 	public long getCacheTime();

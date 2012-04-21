@@ -1,4 +1,4 @@
-package bma.m.wsapp.contextfile;
+package bma.m.wsapp.content.contextfile;
 
 import android.content.Context;
 import android.util.Log;

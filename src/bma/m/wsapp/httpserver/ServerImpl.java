@@ -417,6 +417,9 @@ class ServerImpl implements TimeSource {
 					connection.close();
 					return;
 				}
+				//if(getLogger().isLoggable(Log.DEBUG)) {
+					getLogger().debug("REQ: "+requestLine);
+				//}
 				int space = requestLine.indexOf(' ');
 				if (space == -1) {
 					reject(Code.HTTP_BAD_REQUEST, requestLine,

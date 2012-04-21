@@ -17,7 +17,7 @@ public class Logger {
 	}
 
 	public static Logger getLogger(Class cls) {
-		return getLogger(cls.getName());
+		return getLogger(cls.getSimpleName());
 	}
 
 	public String getTag() {
@@ -54,6 +54,10 @@ public class Logger {
 
 	public void info(String msg, Throwable t) {
 		Log.i(tag, msg, t);
+	}
+
+	public boolean isLoggable(int level) {
+		return Log.isLoggable(tag, level);
 	}
 
 }
