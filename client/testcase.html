@@ -2,18 +2,32 @@
 <html>
 <head>
 <title>WSApp</title>
-<script type="text/javascript" src="jquery-1.7.2.js"></script>
+<script type="text/javascript" src="jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="wsapp-1.0.js"></script>
 <script>
 $(document).ready(function() {
-	window.$$ = 1;
-	alert($$);
+	$$.debug('tc.html',"start");
 });
+
+function testSession() {
+	$$.put("key1","value1");
+	$$.put("key1",{a:1,b:2});
+	alert($$.get("key1","defv"));
+}
+
+function testEvent() {
+	$$.listen("test",function(ctx) {
+		alert("Receive: "+ctx);
+	},false);
+	
+	$$.fire("test","Hello");
+}
 </script>
 </head>
 <body>
 <h1>Hello World</h1>
 <p>
-<a href="hello.html">Hello From Context File</a>
+<input type="button" value="Test Event" onclick="testEvent()"/>
 </p>
 </body>
 </html>

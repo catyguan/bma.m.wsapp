@@ -5,6 +5,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import bma.m.wsapp.plugin.WSAppPlugin;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.graphics.Color;
@@ -113,11 +115,11 @@ public class WSAppActivity extends Activity {
 				JsResult result) {
 			Log.d(TAG, message);
 			// This shows the dialog box. This can be commented out for dev
-			AlertDialog.Builder alertBldr = new AlertDialog.Builder(
+			AlertDialog.Builder alertBuilder = new AlertDialog.Builder(
 					WSAppActivity.this);
-			alertBldr.setMessage(message);
-			alertBldr.setTitle(getTitle());
-			alertBldr.show();
+			alertBuilder.setMessage(message);
+			alertBuilder.setTitle(getTitle());
+			alertBuilder.show();
 			result.confirm();
 			return true;
 		}
@@ -245,7 +247,7 @@ public class WSAppActivity extends Activity {
 	}
 
 	protected void buildWebView(WebView appView) {
-
+		appView.addJavascriptInterface(new WSAppPlugin(), "WSApp");
 	}
 
 	protected void unloadWebView(WebView appView) {
