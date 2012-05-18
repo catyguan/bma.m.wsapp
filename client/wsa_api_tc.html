@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>WSApp</title>
+<script type="text/javascript" src="jquery-1.7.2.js"></script>
+<script type="text/javascript" src="wsapp-1.0.js"></script>
+<script type="text/javascript" src="wsa-task-1.0.js"></script>
+<script>
+function testTaskList() {
+	$.TaskManager.serviceUrl = 'test.json';
+	$.when($.TaskManager.list('')).then(function(r) {
+		$$.info('RESULT',JSON.stringify(r));
+	}).fail(function(a){
+		var jqXHR = a;		
+		$$.info('RESULT','error:'+jqXHR.statusText);
+	});
+}
+function dotest() {
+	testTaskList();
+}
+</script>
+</head>
+<body>
+<h1>Test WSA-API</h1>
+<p>
+<input type="button" value="DO Test" onclick="dotest()"/>
+</p>
+</body>
+</html>

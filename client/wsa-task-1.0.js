@@ -1,23 +1,31 @@
 (function($) {
 	var TaskManager = {
 		serviceUrl : '/_wsa/task',
+		_call : function(q) {
+			return $.ajax(TaskManager.serviceUrl,
+					{
+						data : q,
+						dataType : 'json',
+						timeout : 1000,
+					});
+		},	
 		list : function(type) {
-			return $.get(serviceUrl,{'m':'list','type':type});
+			return TaskManager._call({'m':'list','type':type});
 		},
 		create : function(type,prop) {
-			return $.get(serviceUrl,{'m':'create','type':type,'prop':JSON.stringify(prop)});
+			return TaskManager._call({'m':'create','type':type,'prop':JSON.stringify(prop)});
 		},
 		get : function(type,id) {
-			return $.get(serviceUrl,{'m':'get','type':type,'id':id});
+			return TaskManager._call({'m':'get','type':type,'id':id});
 		},
 		start : function(type,id) {
-			return $.get(serviceUrl,{'m':'start','type':type,'id':id});
+			return TaskManager._call({'m':'start','type':type,'id':id});
 		},
 		pause : function(type,id) {
-			return $.get(serviceUrl,{'m':'pause','type':type,'id':id});
+			return TaskManager._call({'m':'pause','type':type,'id':id});
 		},
 		cancel : function(type,id) {
-			return $.get(serviceUrl,{'m':'cancel','type':type,'id':id});
+			return TaskManager._call({'m':'cancel','type':type,'id':id});
 		},
 		
 	};
