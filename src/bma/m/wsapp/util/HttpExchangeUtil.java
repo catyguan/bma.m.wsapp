@@ -8,12 +8,18 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import bma.m.wsapp.httpserver.Code;
 import bma.m.wsapp.httpserver.HttpExchange;
 
 public class HttpExchangeUtil {
+
+	public static final String JSON_CONTENT_TYPE = "application/json";
 
 	public static void reply(HttpExchange exchange, int code, String content)
 			throws IOException {
@@ -32,6 +38,29 @@ public class HttpExchangeUtil {
 				out.close();
 			}
 		}
+	}
+
+	public static void replyJson(HttpExchange exchange, int code, String json)
+			throws IOException {
+		exchange.getResponseHeaders().set("Content-Type", JSON_CONTENT_TYPE);
+		reply(exchange, code, json);
+	}
+
+	public static void replyJson(HttpExchange exchange, String json)
+			throws IOException {
+		replyJson(exchange, 200, json);
+	}
+
+	public static void replyJson(HttpExchange exchange, Map<String, ?> json)
+			throws IOException {
+		JSONObject jo = new JSONObject(json);
+		reply(exchange, 200, jo.toString());
+	}
+
+	public static void replyJson(HttpExchange exchange, List<?> json)
+			throws IOException {
+		JSONArray jo = new JSONArray(json);
+		reply(exchange, 200, jo.toString());
 	}
 
 	public static int getContentLength(HttpExchange exchange) {

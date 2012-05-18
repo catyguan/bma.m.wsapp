@@ -12,7 +12,7 @@ import bma.m.wsapp.httpserver.HttpExchange;
 import bma.m.wsapp.httpserver.HttpHandler;
 import bma.m.wsapp.util.HttpExchangeUtil;
 
-public class ContentHandler implements HttpHandler {
+public class ContentHttpHandler implements HttpHandler {
 
 	private static final String HTTP_HEADER_IF_MODIFIED = "If-Modified-Since:";
 
@@ -25,11 +25,11 @@ public class ContentHandler implements HttpHandler {
 	private String page404 = "404.html";
 	private HttpHandler rootHandler;
 
-	public ContentHandler(ContentFileProvider p) {
+	public ContentHttpHandler(ContentFileProvider p) {
 		super();
 		this.provider = p;
 	}
-	
+
 	public HttpHandler getRootHandler() {
 		return rootHandler;
 	}
@@ -77,7 +77,7 @@ public class ContentHandler implements HttpHandler {
 
 				SimpleDateFormat df = new SimpleDateFormat(HTTP_DATE_FORMAT);
 
-				rheaders.add("Date:", df.format(System.currentTimeMillis()));
+				rheaders.add("Date", df.format(System.currentTimeMillis()));
 
 				if (!fileExists) {
 					Log.w(TAG, "404: " + fileName);
@@ -86,7 +86,7 @@ public class ContentHandler implements HttpHandler {
 				if (file != null) {
 					Date ld = file.lastModified();
 					if (ld != null) {
-						rheaders.add("Last-Modified:",
+						rheaders.add("Last-Modified",
 								df.format(file.lastModified()));
 						if (headers.containsKey(HTTP_HEADER_IF_MODIFIED)) {
 							try {
@@ -113,11 +113,11 @@ public class ContentHandler implements HttpHandler {
 					return;
 				}
 
-				rheaders.add("Content-type:", file.getContentType());
+				rheaders.add("Content-type", file.getContentType());
 				if (fileExists) {
 					long ct = file.getCacheTime();
 					if (ct > 0) {
-						rheaders.add("Expires:",
+						rheaders.add("Expires",
 								df.format(System.currentTimeMillis() + ct));
 					}
 				}
@@ -126,7 +126,7 @@ public class ContentHandler implements HttpHandler {
 				len = file.getContentLength();
 				if (httpCommand.equalsIgnoreCase("HEAD")) {
 					if (len > 0) {
-						rheaders.add("Content-Length:", Integer.toString(len));
+						rheaders.add("Content-Length", Integer.toString(len));
 						exchange.sendResponseHeaders(200, -1);
 						return;
 					}
@@ -143,7 +143,7 @@ public class ContentHandler implements HttpHandler {
 
 			} else if (httpCommand.equalsIgnoreCase("POST")) {
 				Log.d(TAG, "POST method not allowd");
-				rheaders.add("Allow:", "HEAD, GET");
+				rheaders.add("Allow", "HEAD, GET");
 
 				String error = "Method Not Allowed";
 				exchange.sendResponseHeaders(405, error.length());
@@ -168,7 +168,7 @@ public class ContentHandler implements HttpHandler {
 			// Ok, now HTTP 500 is the right way to inform the client.
 			Log.w(TAG, "Internal Server error", e);
 
-			rheaders.add("Content-type:", "text/html");
+			rheaders.add("Content-type", "text/html");
 			HttpExchangeUtil.reply(exchange, 500, "Internal Server Error");
 		}
 	}
